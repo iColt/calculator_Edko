@@ -4,23 +4,39 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
 trigger:
-- master
+  branches:
+    include:
+    - master
+stages:
+- stage: __default
+  jobs:
+  - job: Job
+    pool:
+      name: az400m05l05a-pool
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '18.x'
+      displayName: 'Install Node.js'
+    - task: CmdLine@2
+      displayName: 'npm install'
+      inputs:
+        script: |
+          npm install
+    - task: CmdLine@2
+      displayName: 'npm audit'
+      inputs:
+        script: |
+          npm audit fix --force
+    - task: CmdLine@2
+      displayName: 'build'
+      inputs:
+        script: |
+          npm run build
+    - task: CmdLine@2
+      displayName: 'test'
+      inputs:
+        script: |
+          npm test
 
-pool: az400m05l05a-pool
-
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
-
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install, build, and test'
-- task: CmdLine@2
-    displayName: 'test'
-    inputs:
-      script: |
-        npm test
 
