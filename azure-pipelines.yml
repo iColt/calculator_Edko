@@ -8,19 +8,28 @@ trigger:
 
 pool: az400m05l05a-pool
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '18.x'
-  displayName: 'Install Node.js'
-
-- script: | 
-  echo Starting install...
-  npm audit fix --force 
-  displayName: 'npm install'
-
-- script: |
-    npm install
-    npm run build
-      npm test
-  displayName: 'npm install, build, and test'
+ steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '18.x'
+      displayName: 'Install Node.js'
+    - task: CmdLine@2
+      displayName: 'npm install'
+      inputs:
+        script: |
+          npm install
+    - task: CmdLine@2
+      displayName: 'npm audit'
+      inputs:
+        script: |
+          npm audit fix --force
+    - task: CmdLine@2
+      displayName: 'build'
+      inputs:
+        script: |
+          npm run build
+    - task: CmdLine@2
+      displayName: 'test'
+      inputs:
+        script: |
+          npm test
